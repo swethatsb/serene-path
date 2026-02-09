@@ -270,20 +270,21 @@ const Booking = () => {
                       </h3>
                       <div className="grid md:grid-cols-3 gap-4">
                         {consultationModes.map((mode) => (
-                          <Card
+                          <div
                             key={mode.id}
+                            role="button"
+                            tabIndex={0}
                             className={cn(
-                              "cursor-pointer transition-all hover:shadow-md",
+                              "cursor-pointer transition-all hover:shadow-md rounded-lg border bg-card text-card-foreground shadow-sm p-4 text-center",
                               selectedMode === mode.id && "ring-2 ring-primary bg-primary/5"
                             )}
                             onClick={() => setSelectedMode(mode.id)}
+                            onKeyDown={(e) => e.key === "Enter" && setSelectedMode(mode.id)}
                           >
-                            <CardContent className="p-4 text-center">
-                              <mode.icon className="w-8 h-8 mx-auto mb-2 text-primary" />
-                              <h4 className="font-medium">{mode.name}</h4>
-                              <p className="text-xs text-muted-foreground">{mode.description}</p>
-                            </CardContent>
-                          </Card>
+                            <mode.icon className="w-8 h-8 mx-auto mb-2 text-primary pointer-events-none" />
+                            <h4 className="font-medium pointer-events-none">{mode.name}</h4>
+                            <p className="text-xs text-muted-foreground pointer-events-none">{mode.description}</p>
+                          </div>
                         ))}
                       </div>
                     </div>
