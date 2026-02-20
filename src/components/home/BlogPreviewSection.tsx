@@ -1,42 +1,9 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Clock, User } from "lucide-react";
+import { blogArticles, categoryColors } from "@/lib/blogData";
 
-const articles = [
-  {
-    title: "5 Daily Habits to Improve Your Mental Health",
-    excerpt: "Simple yet powerful practices you can incorporate into your daily routine to boost your mental wellness and resilience.",
-    category: "Self-Care",
-    author: "Dr. Sarah Chen",
-    readTime: "5 min read",
-    date: "Feb 5, 2026",
-    slug: "daily-habits-mental-health",
-  },
-  {
-    title: "Understanding Anxiety: Signs, Causes, and Coping Strategies",
-    excerpt: "Learn to recognize anxiety symptoms and discover evidence-based techniques to manage them effectively.",
-    category: "Anxiety",
-    author: "Dr. Michael Ross",
-    readTime: "8 min read",
-    date: "Feb 3, 2026",
-    slug: "understanding-anxiety",
-  },
-  {
-    title: "The Power of Mindfulness in Managing Stress",
-    excerpt: "Explore how mindfulness meditation can transform your relationship with stress and improve your overall well-being.",
-    category: "Mindfulness",
-    author: "Dr. Emily Park",
-    readTime: "6 min read",
-    date: "Feb 1, 2026",
-    slug: "mindfulness-stress-management",
-  },
-];
-
-const categoryColors: Record<string, string> = {
-  "Self-Care": "bg-sage-light text-sage-dark",
-  "Anxiety": "bg-lavender text-lavender-dark",
-  "Mindfulness": "bg-sky-light text-sky",
-};
+const articles = blogArticles.slice(0, 3);
 
 export function BlogPreviewSection() {
   return (
@@ -58,7 +25,7 @@ export function BlogPreviewSection() {
             </h2>
           </div>
           <Link 
-            to="/resources" 
+            to="/blog" 
             className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
           >
             View All Articles
@@ -76,7 +43,7 @@ export function BlogPreviewSection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <Link to={`/resources/${article.slug}`} className="block h-full">
+              <Link to={`/blog/${article.slug}`} className="block h-full">
                 <div className="card-wellness overflow-hidden h-full group">
                   {/* Image Placeholder */}
                   <div className="aspect-[16/10] bg-gradient-to-br from-sage-light via-sky-light to-lavender" />
