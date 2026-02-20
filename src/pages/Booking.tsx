@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Check, ChevronLeft, ChevronRight, Clock, MapPin, User, Video, Phone, MessageSquare, PartyPopper } from "lucide-react";
+import { Calendar as CalendarIcon, Check, ChevronLeft, ChevronRight, Clock, MapPin, User, Video, Phone, MessageSquare } from "lucide-react";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -38,14 +39,13 @@ const consultationModes = [
 ];
 
 const Booking = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [selectedTherapist, setSelectedTherapist] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedMode, setSelectedMode] = useState<string | null>(null);
-  const [bookingConfirmed, setBookingConfirmed] = useState(false);
-  const [bookingRef, setBookingRef] = useState("");
 
   const totalSteps = 5;
 
@@ -74,6 +74,22 @@ const Booking = () => {
   const getSelectedServiceDetails = () => services.find(s => s.id === selectedService);
   const getSelectedTherapistDetails = () => therapists.find(t => t.id === selectedTherapist);
 
+  const handleConfirmBooking = () => {
+    const ref = "MWP-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    const service = getSelectedServiceDetails();
+    const therapist = getSelectedTherapistDetails();
+    navigate("/booking-confirmation", {
+      state: {
+        bookingRef: ref,
+        service: { name: service?.name, duration: service?.duration, price: service?.price },
+        therapist: { name: therapist?.name, specialty: therapist?.specialty, avatar: therapist?.avatar },
+        date: selectedDate ? format(selectedDate, "EEEE, MMMM d, yyyy") : "",
+        time: selectedTime,
+        mode: consultationModes.find(m => m.id === selectedMode)?.name || selectedMode,
+      },
+    });
+  };
+
   const stepVariants = {
     enter: { opacity: 0, x: 20 },
     center: { opacity: 1, x: 0 },
@@ -86,72 +102,6 @@ const Booking = () => {
       
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-4xl">
-          {bookingConfirmed ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="text-center py-16"
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6"
-              >
-                <PartyPopper className="w-10 h-10 text-primary" />
-              </motion.div>
-              <h2 className="text-3xl font-bold mb-2">Booking Confirmed!</h2>
-              <p className="text-muted-foreground mb-6">Your appointment has been successfully scheduled.</p>
-              <div className="bg-muted/50 rounded-lg p-6 max-w-md mx-auto mb-8 space-y-3 text-left">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Reference</span>
-                  <span className="font-semibold">{bookingRef}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Service</span>
-                  <span className="font-medium">{getSelectedServiceDetails()?.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Therapist</span>
-                  <span className="font-medium">{getSelectedTherapistDetails()?.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Date</span>
-                  <span className="font-medium">{selectedDate && format(selectedDate, "MMM d, yyyy")}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Time</span>
-                  <span className="font-medium">{selectedTime}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Mode</span>
-                  <span className="font-medium">{consultationModes.find(m => m.id === selectedMode)?.name}</span>
-                </div>
-                <div className="flex justify-between border-t pt-3">
-                  <span className="font-medium">Total</span>
-                  <span className="font-bold text-primary">{getSelectedServiceDetails()?.price}</span>
-                </div>
-              </div>
-              <div className="flex gap-4 justify-center">
-                <Button variant="outline" onClick={() => window.location.href = "/"}>
-                  Back to Home
-                </Button>
-                <Button onClick={() => {
-                  setBookingConfirmed(false);
-                  setStep(1);
-                  setSelectedService(null);
-                  setSelectedTherapist(null);
-                  setSelectedDate(undefined);
-                  setSelectedTime(null);
-                  setSelectedMode(null);
-                }}>
-                  Book Another Session
-                </Button>
-              </div>
-            </motion.div>
-          ) : (
-          <>
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
@@ -310,7 +260,6 @@ const Booking = () => {
                   <p className="text-muted-foreground mb-6">Choose your preferred time slot and consultation mode</p>
                   
                   <div className="space-y-8">
-                    {/* Time Slots */}
                     <div>
                       <h3 className="font-medium mb-3 flex items-center gap-2">
                         <Clock className="w-5 h-5" />
@@ -330,7 +279,6 @@ const Booking = () => {
                       </div>
                     </div>
 
-                    {/* Consultation Mode */}
                     <div>
                       <h3 className="font-medium mb-3 flex items-center gap-2">
                         <MapPin className="w-5 h-5" />
@@ -458,18 +406,13 @@ const Booking = () => {
             ) : (
               <Button
                 className="flex items-center gap-2"
-                onClick={() => {
-                  setBookingRef("MWP-" + Math.random().toString(36).substring(2, 8).toUpperCase());
-                  setBookingConfirmed(true);
-                }}
+                onClick={handleConfirmBooking}
               >
                 <Check className="w-4 h-4" />
                 Confirm Booking
               </Button>
             )}
           </div>
-        </>
-          )}
         </div>
       </main>
 

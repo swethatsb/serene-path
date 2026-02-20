@@ -10,6 +10,9 @@ import Therapists from "./pages/Therapists";
 import Assessment from "./pages/Assessment";
 import Contact from "./pages/Contact";
 import Booking from "./pages/Booking";
+import BookingConfirmation from "./pages/BookingConfirmation";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +32,9 @@ const App = () => (
           <Route path="/assessment" element={<Assessment />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/booking" element={<Booking />} />
+          <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
